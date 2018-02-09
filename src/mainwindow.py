@@ -2,6 +2,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 import pandas as pd
+from pandas.errors import *
+import os
 
 from ui.ui_mainwindow import Ui_MainWindow
 
@@ -59,14 +61,19 @@ class MainWindow(QMainWindow):
         # load parameters if given
         if file_list is not None:
             self.load_data(file_list)
-        with open(OUT_FILE, 'r') as out:
-            df = pd.read_csv(out,
-                             sep=',',
-                             comment='%',
-                             header=None)
-            for im1, im2, mark in zip(df.get(0), df.get(1), df.get(2)):
-                self.marked_dict[(im1, im2)] = True
-                self.counter_dict[mark] += 1
+        try:
+            with open(OUT_FILE, 'r') as out:
+                df = pd.read_csv(out,
+                                 sep=',',
+                                 comment='%',
+                                 header=None)
+                for im1, im2, mark in zip(df.get(0), df.get(1), df.get(2)):
+                    self.marked_dict[(im1, im2)] = True
+                    self.counter_dict[mark] += 1
+        except FileNotFoundError:
+            print("Warning: file", OUT_FILE, "doesn't exist")
+        except EmptyDataError:
+            print("Warning: file", OUT_FILE, "was empty")
         self.update_status_bar_message()
 
     def change_button_state(self, enabled):
@@ -100,6 +107,9 @@ class MainWindow(QMainWindow):
             line = self.df.sample(n=1)
             self.next_image1_path = BASE_IMAGE_PATH + "%d/%.4d/%.4d.jpg" % (line.get('date1'), line.get('dir1'), line.get('file1'))
             self.next_image2_path = BASE_IMAGE_PATH + "%d/%.4d/%.4d.jpg" % (line.get('date2'), line.get('dir2'), line.get('file2'))
+            if not os.access(self.next_image1_path, os.R_OK) or not os.access(self.next_image2_path, os.R_OK):
+                print("ERROR: read permission denied on files", self.next_image1_path, "and", self.next_image2_path)
+                continue
             # if picture pair is not already marked, break the loop
             if (self.next_image1_path, self.next_image2_path) not in self.marked_dict \
                     and (self.next_image2_path, self.next_image1_path) not in self.marked_dict:
@@ -108,6 +118,7 @@ class MainWindow(QMainWindow):
         self.next_pixmap1 = self.next_pixmap1.scaled(self.ui.lb_image1.size(), Qt.KeepAspectRatio)
         self.next_pixmap2 = QPixmap(self.next_image2_path)
         self.next_pixmap2 = self.next_pixmap2.scaled(self.ui.lb_image2.size(), Qt.KeepAspectRatio)
+
         self.images_loaded.emit()
 
     def display_new_pair(self):
@@ -129,5 +140,5 @@ class MainWindow(QMainWindow):
 
     def update_status_bar_message(self):
         message = "Images Discarded: " + str(self.counter_dict[0]) + " - Very Good: " + str(self.counter_dict[1])
-        message += " - Good: " + str(self.counter_dict[1]) + " - Correct: " + str(self.counter_dict[2])
+        message += " - Good: " + str(self.counter_dict[2]) + " - Correct: " + str(self.counter_dict[3])
         self.ui.statusbar.showMessage(message)

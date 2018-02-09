@@ -1,22 +1,34 @@
 import pandas as pd
+from pandas.errors import *
+from multiprocessing import Pool
 
 
 def load_files(file_list):
-    pair_df = pd.DataFrame()
-    for i, file in enumerate(file_list):
-        print("loading file", i, "of", len(file_list))
-        df = file_pair_reader(file)
-        pair_df = pair_df.append(df)
+    pool = Pool()
+    results = pool.imap_unordered(file_pair_reader, file_list, chunksize=1000)
+
+    df_list = []
+    for df in results:
+        if df is not None:
+            df_list.append(df)
+
+    pair_df = pd.concat(df_list)
     return pair_df
 
 
 def file_pair_reader(filename):
     i = filename.rfind('/') + 7
     date_list = filename[i:-4].split('_')
-    df = pd.read_csv(filename,
-                     sep=' ',
-                     comment='%',
-                     header=None)
+    try:
+        df = pd.read_csv(filename,
+                         sep=' ',
+                         comment='%',
+                         header=None,
+                         engine='c')
+    except (OSError, EmptyDataError):
+        print("ERROR: unable to load file", filename)
+        return None
+
     df = df.ix[:, [2, 3, 6, 7]]
     df = df.rename(columns={2: 'dir1', 3: 'file1', 6: 'dir2', 7: 'file2'})
     df = df.assign(date1=pd.Series([date_list[0]] * df.size))
