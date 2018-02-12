@@ -39,8 +39,8 @@ do
             convert "$img2" -resize 400x300 "${out_dir}/${dataset}/${dir_name}/image2.png" &
 
             # create empty masks
-            convert -resize 400x300\! xc:white "${out_dir}/${dataset}/${dir_name}/mask1.png" &
-            convert -resize 400x300\! xc:white "${out_dir}/${dataset}/${dir_name}/mask2.png" &
+            convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask1.png" &
+            convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask2.png" &
 
             echo "Image1,Image2
             $img1,$img2" > "${out_dir}/${dataset}/${dir_name}/pair.txt" &
