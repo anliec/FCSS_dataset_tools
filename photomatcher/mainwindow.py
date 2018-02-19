@@ -5,9 +5,9 @@ import pandas as pd
 from pandas.errors import *
 import os
 
-from ui.ui_mainwindow import Ui_MainWindow
+from photomatcher.ui.ui_mainwindow import Ui_MainWindow
 
-from src.pair_reader import load_files
+from photomatcher.pair_reader import load_files
 
 BASE_IMAGE_PATH = "/cs-share/pradalier/lake/VBags/"
 OUT_FILE = "pair.csv"

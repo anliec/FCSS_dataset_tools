@@ -2,7 +2,7 @@
 import sys
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QApplication
-from src.mainwindow import MainWindow
+from photomatcher.mainwindow import MainWindow
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
