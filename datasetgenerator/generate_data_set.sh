@@ -9,6 +9,8 @@ fi
 
 input_file="pair.csv"
 out_dir=$1
+i=0
+
 
 echo "creating dataset into $out_dir"
 
@@ -17,7 +19,7 @@ do
     # remove space
     dataset=${dataset:1}
     img2=${img2:1}
-    if [[ "$dataset" != "0" ]] ; then
+    if [[ "$dataset" != "-0" ]] ; then
         if [ ! -d "${out_dir}/${dataset}" ] ; then
             mkdir "${out_dir}/${dataset}"
         fi
@@ -39,13 +41,19 @@ do
             convert "$img2" -resize 400x300 "${out_dir}/${dataset}/${dir_name}/image2.png" &
 
             # create empty masks
-            convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask1.png" &
-            convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask2.png" &
+            # convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask1.png"
+            # convert -resize 340x240\! xc:white -bordercolor Black -border 30 "${out_dir}/${dataset}/${dir_name}/mask2.png"
 
             echo "Image1,Image2
-            $img1,$img2" > "${out_dir}/${dataset}/${dir_name}/pair.txt" &
+            $img1,$img2" > "${out_dir}/${dataset}/${dir_name}/pair.txt"
+            if [[ $((i%10)) == "9" ]]; then
+                wait
+            fi
+            i=$((i+1))
         else
             echo "directory with name: $dir_name already exist"
         fi
-    fi
+    	fi
 done < "$input_file"
+
+wait
