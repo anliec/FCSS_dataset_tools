@@ -21,7 +21,7 @@ do
     # remove space
     dataset=${dataset:1}
     img2=${img2:1}
-    if [[ "$dataset" != "2" && "$dataset" != "3" ]] ; then
+    if [[ "$dataset" != "-2" && "$dataset" != "-3" ]] ; then
         if [ ! -d "${out_dir}/train/left/${dataset}" ] ; then
             mkdir -p "${out_dir}/train/left/${dataset}"
         fi
