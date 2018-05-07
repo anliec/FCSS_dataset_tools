@@ -31,7 +31,7 @@ def manage_csv_row(row):
         return None, None, None
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output-directory',
                         default='/tmp/data',
@@ -90,4 +90,6 @@ if __name__ == '__main__':
                                                                                       dir2, seq2, x2, y2)))
 
 
+if __name__ == '__main__':
+    main()
 
