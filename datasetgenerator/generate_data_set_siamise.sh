@@ -13,6 +13,7 @@ out_dir=$1
 val_split=$2
 i=0
 
+shopt -s extglob
 
 echo "creating dataset into $out_dir"
 
@@ -42,7 +43,18 @@ do
         img1_date=${img1_date##*/}
         img2_date=${img2%/*/*}
         img2_date=${img2_date##*/}
-        out_name="${img1_date}-${img1_file_name}_${img2_date}-${img2_file_name}"
+        img1_seq=${img1%/*}
+        img1_seq="${img1_seq##*/}${img1_file_name:1}"
+        img1_seq=${img1_seq/#+(0)/}
+        img2_seq=${img2%/*}
+        img2_seq="${img2_seq##*/}${img2_file_name:1}"
+        img2_seq=${img2_seq/#+(0)/}
+        out_name="${img1_date}-${img1_seq}_${img2_date}-${img2_seq}"
+
+        if ! [[ $out_name =~ ^[0-9]+-[0-9]+_[0-9]+-[0-9]+$ ]]; then
+            echo "$out_name is not correct"
+            continue
+        fi
 
         if (( ( RANDOM % 100 ) >= ${val_split} )); then
             val_dir="train"
