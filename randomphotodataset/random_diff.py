@@ -8,7 +8,7 @@ from datasetgenerator.load_and_split_laser_pair import get_gps_coord
 
 
 def get_random_pair(count: int, dataset_path: str, min_offset: float=1.0):
-    photo_list = glob.glob(os.path.join(dataset_path, "VBags/*/*/*.jpg"))
+    photo_list = glob.glob(os.path.join(dataset_path, "VBags/[0-9]*/[0-9]*/[0-9]*.jpg"))
     if len(photo_list) == 0:
         raise RuntimeError("No images available in: {}\n"
                            "are you sure that the path to the 'lake' folder is correct?".format(dataset_path))
