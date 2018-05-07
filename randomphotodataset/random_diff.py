@@ -20,8 +20,11 @@ def get_random_pair(count: int, dataset_path: str, min_offset: float=1.0):
         splited_path2 = path2.split('/')
         seq1_int = int(splited_path1[-2]) * 1000 + int(splited_path1[-1][:-4])
         seq2_int = int(splited_path2[-2]) * 1000 + int(splited_path2[-1][:-4])
-        x1, y1 = get_gps_coord(splited_path1[-3], str(seq1_int))
-        x2, y2 = get_gps_coord(splited_path2[-3], str(seq2_int))
+        try:
+            x1, y1 = get_gps_coord(splited_path1[-3], str(seq1_int))
+            x2, y2 = get_gps_coord(splited_path2[-3], str(seq2_int))
+        except FileNotFoundError:
+            continue
 
         if abs(float(x1) - float(x2)) < min_offset and abs(float(y1) - float(y2)) < min_offset:
             print("Random pair may look at the same place, skip")
