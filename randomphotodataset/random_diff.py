@@ -24,10 +24,13 @@ def get_random_pair(count: int, dataset_path: str, min_offset: float=1.0):
         seq1_int = int(splited_path1[-2]) * 1000 + int(splited_path1[-1][:-4])
         seq2_int = int(splited_path2[-2]) * 1000 + int(splited_path2[-1][:-4])
         try:
-            x1, y1 = get_gps_coord(splited_path1[-3], str(seq1_int), dataset_path)
-            x2, y2 = get_gps_coord(splited_path2[-3], str(seq2_int), dataset_path)
+            x1, y1 = get_gps_coord(splited_path1[-3], str(seq1_int), os.path.join(dataset_path, "VBags"))
+            x2, y2 = get_gps_coord(splited_path2[-3], str(seq2_int), os.path.join(dataset_path, "VBags"))
         except FileNotFoundError as e:
-            print("auxiliary file not fund for date:", splited_path1[-2], "or", splited_path2[-2])
+            print("auxiliary file not fund in:",
+                  os.path.join(dataset_path, "VBags", splited_path1[-3], "image_auxilliary.csv"),
+                  "or",
+                  os.path.join(dataset_path, "VBags", splited_path2[-3], "image_auxilliary.csv"))
             continue
 
         if abs(float(x1) - float(x2)) < min_offset and abs(float(y1) - float(y2)) < min_offset:
