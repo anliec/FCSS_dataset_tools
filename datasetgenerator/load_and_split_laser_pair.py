@@ -94,14 +94,14 @@ def main():
             print("GPS check failed, skipping pair")
             continue
 
-        shutil.copyfile(src=os.path.join(base_path,
+        shutil.copyfile(src=os.path.join(base_path, "VBags",
                                          dir1,
                                          "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq1[:-3]), int(seq1[-3:]))),
                         dst=os.path.join(args.output_directory,
                                          dataset,
                                          "left/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
                                                                                      dir2, seq2, x2, y2)))
-        shutil.copyfile(src=os.path.join(base_path,
+        shutil.copyfile(src=os.path.join(base_path, "VBags",
                                          dir2,
                                          "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq2[:-3]), int(seq2[-3:]))),
                         dst=os.path.join(args.output_directory,
