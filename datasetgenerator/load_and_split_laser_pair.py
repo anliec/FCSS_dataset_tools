@@ -11,8 +11,8 @@ src_file = "/cs-share/pradalier/lake/pairs/image_pairs.csv"
 base_path = "/cs-share/pradalier/lake/VBags"
 
 
-def get_gps_coord(d, seq):
-    with open(os.path.join(base_path, d, "image_auxilliary.csv"), mode='r') as d_file:
+def get_gps_coord(d, seq, dataset_path=base_path):
+    with open(os.path.join(dataset_path, d, "image_auxilliary.csv"), mode='r') as d_file:
         reader = csv.reader(d_file)
         for line in reader:
             if line[1] == seq + ".000000":
