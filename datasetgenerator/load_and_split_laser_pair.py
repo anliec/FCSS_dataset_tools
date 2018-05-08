@@ -5,13 +5,11 @@ import os
 import shutil
 import argparse
 import numpy as np
+import itertools
 from multiprocessing import Pool
 
-src_file = "/cs-share/pradalier/lake/pairs/image_pairs.csv"
-base_path = "/cs-share/pradalier/lake/"
 
-
-def get_gps_coord(d, seq, dataset_path=base_path):
+def get_gps_coord(d, seq, dataset_path="/cs-share/pradalier/lake/"):
     with open(os.path.join(dataset_path, "VBags", d, "image_auxilliary.csv"), mode='r') as d_file:
         reader = csv.reader(d_file)
         for line in reader:
@@ -20,11 +18,11 @@ def get_gps_coord(d, seq, dataset_path=base_path):
         raise ValueError("{} not fund in {}".format(seq, d))
 
 
-def manage_csv_row(row):
-    dir1, seq1, dir2, seq2 = row
+def manage_csv_row(args):
+    (dir1, seq1, dir2, seq2), base_path = args
     try:
-        x1, y1 = get_gps_coord(dir1, seq1)
-        x2, y2 = get_gps_coord(dir2, seq2)
+        x1, y1 = get_gps_coord(dir1, seq1, dataset_path=base_path)
+        x2, y2 = get_gps_coord(dir2, seq2, dataset_path=base_path)
         return float(x1) + float(x2), float(y1) + float(y2), ((dir1, seq1, x1, y1), (dir2, seq2, x2, y2))
     except ValueError as e:
         print(str(e))
@@ -32,6 +30,9 @@ def manage_csv_row(row):
 
 
 def main():
+    src_file = "/cs-share/pradalier/lake/pairs/image_pairs.csv"
+    base_path = "/cs-share/pradalier/lake/"
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output-directory',
                         default='/tmp/data',
@@ -51,7 +52,6 @@ def main():
                         dest="input_directory")
     args = parser.parse_args()
 
-    global base_path, src_file
     base_path = args.input_directory
     src_file = args.pair_file
 
@@ -71,7 +71,7 @@ def main():
 
     with open(src_file, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
-        xy_it = pool.imap_unordered(manage_csv_row, csv_reader, chunksize=250)
+        xy_it = pool.imap_unordered(manage_csv_row, zip(csv_reader, itertools.repeat(base_path)), chunksize=250)
         for x, y, t in xy_it:
             if x is None:
                 continue
