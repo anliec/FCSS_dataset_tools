@@ -47,6 +47,13 @@ def get_random_pair(count: int, dataset_path: str, min_offset: float=1.0):
 def generate_random_dataset(count: int, images_path: str, output_path: str, train_test_split: float=0.5):
     train_pair_count = int(count * train_test_split)
     pair_list = get_random_pair(count, images_path)
+
+    # create dataset directory (fail if they exist)
+    os.makedirs(output_path, exist_ok=True)
+    os.makedirs(os.path.join(output_path, "test/left/-1"))
+    os.makedirs(os.path.join(output_path, "test/right/-1"))
+    os.makedirs(os.path.join(output_path, "train/left/-1"))
+    os.makedirs(os.path.join(output_path, "train/right/-1"))
     print("Writing train dataset")
     for i1, i2, name in pair_list[:train_pair_count]:
         shutil.copyfile(i1, os.path.join(output_path, "train/left/-1/", name))
