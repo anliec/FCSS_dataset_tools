@@ -33,7 +33,7 @@ def get_random_pair(count: int, dataset_path: str, min_offset: float=1.0):
                   os.path.join(dataset_path, "VBags", splited_path2[-3], "image_auxilliary.csv"))
             continue
         except ValueError:
-            print("Coordinate not found in auxilliary file, skipping pair.")
+            print("Coordinate not found in auxiliary file, skipping pair.")
             continue
 
         if abs(float(x1) - float(x2)) < min_offset and abs(float(y1) - float(y2)) < min_offset:

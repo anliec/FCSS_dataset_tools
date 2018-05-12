@@ -73,7 +73,8 @@ def main():
 
                     shutil.copyfile(src=os.path.join(base_path, "VBags",
                                                      dir1,
-                                                     "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq1[:-3]), int(seq1[-3:]))),
+                                                     "{:0=4d}".format(int('0' + seq1[:-3])),
+                                                     file1_name),
                                     dst=os.path.join(args.output_directory,
                                                      "localisation",
                                                      "left/1/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1,
@@ -82,7 +83,8 @@ def main():
                                                                                                        y2, offset2)))
                     shutil.copyfile(src=os.path.join(base_path, "VBags",
                                                      dir2,
-                                                     "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq2[:-3]), int(seq2[-3:]))),
+                                                     "{:0=4d}".format(int('0' + seq2[:-3])),
+                                                     file2_name),
                                     dst=os.path.join(args.output_directory,
                                                      "localisation",
                                                      "right/1/{}_{}_{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1,
