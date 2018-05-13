@@ -64,7 +64,7 @@ def main():
                 if s != -1:
                     t = manage_csv_row((tuple(map(str, (ref_dir, ref_seq, d, s))), base_path))
                     if t[0] is not None:
-                        tuple_list.append(t[3])
+                        tuple_list.append(t[2])
 
     print("Write dataset to {}".format(args.output_directory))
     for (dir1, seq1, x1, y1), (dir2, seq2, x2, y2) in tuple_list:
