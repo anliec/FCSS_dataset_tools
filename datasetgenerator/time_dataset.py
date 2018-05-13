@@ -67,6 +67,7 @@ def main():
                     if t[0] is not None:
                         tuple_list.append(t[2])
                     else:
+                        print("GPS coordinate not found")
                         discarded_count += 1
                 else:
                     discarded_count += 1
