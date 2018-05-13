@@ -50,9 +50,12 @@ def main():
         # read header
         survey_dates = csv_reader.__next__()[2:]
         # randomly select the wanted number of rows
-        random_row = np.random.choice(np.array(list(csv_reader), dtype=np.int64),
-                                      size=args.number_of_groups,
-                                      replace=False)
+        values_array = np.array(list(csv_reader), dtype=np.int64)
+        random_row_index = np.random.choice(np.arange(0, values_array.shape[0]),
+                                            size=args.number_of_groups,
+                                            replace=False)
+        random_row = values_array[random_row_index]
+        del values_array
         for line in random_row:
             tuple_list = []
             ref_dir = line[0]
