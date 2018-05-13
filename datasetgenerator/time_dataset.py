@@ -43,8 +43,9 @@ def main():
     os.makedirs(args.output_directory, exist_ok=True)
     os.makedirs(os.path.join(args.output_directory, "time/left/1"))
     os.makedirs(os.path.join(args.output_directory, "time/right/1"))
-    group_list = []
+    tuple_list = []
 
+    print("Select {} random reference images and similar pairs".format(args.number_of_groups))
     with open(src_file, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
         # read header
@@ -57,36 +58,34 @@ def main():
         random_row = values_array[random_row_index]
         del values_array
         for line in random_row:
-            tuple_list = []
             ref_dir = line[0]
             ref_seq = line[1]
             for s, d in zip(line[2:], survey_dates):
                 if s != -1:
                     t = manage_csv_row((tuple(map(str, (ref_dir, ref_seq, d, s))), base_path))
                     if t[0] is not None:
-                        tuple_list.append(t)
-            group_list.append(tuple_list)
+                        tuple_list.append(t[3])
 
-    for tuple_list in group_list:
-        for (dir1, seq1, x1, y1), (dir2, seq2, x2, y2) in tuple_list:
-            if abs(float(x1) - float(x2)) > args.gps_max_distance or abs(float(y1) - float(y2)) > args.gps_max_distance:
-                print("GPS check failed, skipping pair")
-                continue
+    print("Write dataset to {}".format(args.output_directory))
+    for (dir1, seq1, x1, y1), (dir2, seq2, x2, y2) in tuple_list:
+        if abs(float(x1) - float(x2)) > args.gps_max_distance or abs(float(y1) - float(y2)) > args.gps_max_distance:
+            print("GPS check failed, skipping pair")
+            continue
 
-            shutil.copyfile(src=os.path.join(base_path, "VBags",
-                                             dir1,
-                                             "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq1[:-3]), int(seq1[-3:]))),
-                            dst=os.path.join(args.output_directory,
-                                             "time",
-                                             "left/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
-                                                                                         dir2, seq2, x2, y2)))
-            shutil.copyfile(src=os.path.join(base_path, "VBags",
-                                             dir2,
-                                             "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq2[:-3]), int(seq2[-3:]))),
-                            dst=os.path.join(args.output_directory,
-                                             "time",
-                                             "right/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
-                                                                                          dir2, seq2, x2, y2)))
+        shutil.copyfile(src=os.path.join(base_path, "VBags",
+                                         dir1,
+                                         "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq1[:-3]), int(seq1[-3:]))),
+                        dst=os.path.join(args.output_directory,
+                                         "time",
+                                         "left/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
+                                                                                     dir2, seq2, x2, y2)))
+        shutil.copyfile(src=os.path.join(base_path, "VBags",
+                                         dir2,
+                                         "{:0=4d}/{:0=4d}.jpg".format(int('0' + seq2[:-3]), int(seq2[-3:]))),
+                        dst=os.path.join(args.output_directory,
+                                         "time",
+                                         "right/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
+                                                                                      dir2, seq2, x2, y2)))
 
 
 if __name__ == '__main__':
