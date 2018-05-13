@@ -4,8 +4,6 @@ import os
 import shutil
 import argparse
 import random
-import numpy as np
-import itertools
 
 from datasetgenerator.load_and_split_laser_pair import manage_csv_row
 
@@ -50,7 +48,9 @@ def main():
         csv_reader = csv.reader(csv_file)
         # read header
         survey_dates = csv_reader.__next__()[2:]
-        for line in csv_reader:
+        # randomly select the wanted number of rows (with replacement)
+        random_row = random.choices(list(csv_reader), k=args.number_of_groups)
+        for line in random_row:
             tuple_list = []
             ref_dir = line[0]
             ref_seq = line[1]
@@ -60,9 +60,7 @@ def main():
                     tuple_list.append(t)
             group_list.append(tuple_list)
 
-    random.shuffle(group_list)
-
-    for tuple_list in group_list[:args.number_of_groups]:
+    for tuple_list in group_list:
         for (dir1, seq1, x1, y1), (dir2, seq2, x2, y2) in tuple_list:
             if abs(float(x1) - float(x2)) > args.gps_max_distance or abs(float(y1) - float(y2)) > args.gps_max_distance:
                 print("GPS check failed, skipping pair")
