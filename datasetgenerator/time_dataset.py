@@ -94,8 +94,8 @@ def main():
                                                                                       dir2, seq2, x2, y2)))
     print("Dataset writen. Mised {} paires out of {} ({} %)".format(discarded_count,
                                                                     len(survey_dates) * args.number_of_groups,
-                                                                    100.0 * len(survey_dates) * args.number_of_groups
-                                                                    / discarded_count))
+                                                                    100.0 * discarded_count
+                                                                    / (len(survey_dates) * args.number_of_groups)))
 
 
 if __name__ == '__main__':
