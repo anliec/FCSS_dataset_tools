@@ -4,6 +4,7 @@ import os
 import shutil
 import argparse
 import random
+import numpy as np
 
 from datasetgenerator.load_and_split_laser_pair import manage_csv_row
 
@@ -48,14 +49,16 @@ def main():
         csv_reader = csv.reader(csv_file)
         # read header
         survey_dates = csv_reader.__next__()[2:]
-        # randomly select the wanted number of rows (with replacement)
-        random_row = random.choices(list(csv_reader), k=args.number_of_groups)
+        # randomly select the wanted number of rows
+        random_row = np.random.choice(np.array(map(int, csv_reader), dtype=np.int64),
+                                      size=args.number_of_groups,
+                                      replace=False)
         for line in random_row:
             tuple_list = []
             ref_dir = line[0]
             ref_seq = line[1]
             for s, d in zip(line[2:], survey_dates):
-                if s != "-1":
+                if s != -1:
                     t = manage_csv_row(((ref_dir, ref_seq, d, s), base_path))
                     if t[0] is not None:
                         tuple_list.append(t)
