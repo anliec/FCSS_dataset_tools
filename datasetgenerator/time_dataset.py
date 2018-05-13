@@ -46,6 +46,7 @@ def main():
     tuple_list = []
 
     print("Select {} random reference images and similar pairs".format(args.number_of_groups))
+    discarded_count = 0
     with open(src_file, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
         # read header
@@ -65,11 +66,16 @@ def main():
                     t = manage_csv_row((tuple(map(str, (ref_dir, ref_seq, d, s))), base_path))
                     if t[0] is not None:
                         tuple_list.append(t[2])
+                    else:
+                        discarded_count += 1
+                else:
+                    discarded_count += 1
 
     print("Write dataset to {}".format(args.output_directory))
     for (dir1, seq1, x1, y1), (dir2, seq2, x2, y2) in tuple_list:
         if abs(float(x1) - float(x2)) > args.gps_max_distance or abs(float(y1) - float(y2)) > args.gps_max_distance:
             print("GPS check failed, skipping pair")
+            discarded_count += 1
             continue
 
         shutil.copyfile(src=os.path.join(base_path, "VBags",
@@ -86,6 +92,10 @@ def main():
                                          "time",
                                          "right/1/{}_{}_{}_{}_{}_{}_{}_{}.jpg".format(dir1, seq1, x1, y1,
                                                                                       dir2, seq2, x2, y2)))
+    print("Dataset writen. Mised {} paires out of {} ({} %)".format(discarded_count,
+                                                                    len(survey_dates) * args.number_of_groups,
+                                                                    100.0 * len(survey_dates) * args.number_of_groups
+                                                                    / discarded_count))
 
 
 if __name__ == '__main__':
