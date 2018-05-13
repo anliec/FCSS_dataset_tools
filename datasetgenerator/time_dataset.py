@@ -62,7 +62,7 @@ def main():
             ref_seq = line[1]
             for s, d in zip(line[2:], survey_dates):
                 if s != -1:
-                    t = manage_csv_row(((ref_dir, ref_seq, d, s), base_path))
+                    t = manage_csv_row((tuple(map(str, (ref_dir, ref_seq, d, s))), base_path))
                     if t[0] is not None:
                         tuple_list.append(t)
             group_list.append(tuple_list)
